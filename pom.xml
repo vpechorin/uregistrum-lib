@@ -4,7 +4,7 @@
 	<groupId>net.pechorina.uregistrum</groupId>
 	<artifactId>uregistrum-lib</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.1.2</version>
 	<description>uRegistrum - java micro services registry client lib</description>
 	<url>https://github.com/vpechorin/uregistrum-lib</url>
 	
@@ -25,6 +25,12 @@
 		<connection>scm:git:file:///home/victor/workspace/uregistrum-lib</connection>
 	</scm>
 	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<org.springframework.version>4.0.3.RELEASE</org.springframework.version>
+		<slf4j.version>1.7.7</slf4j.version>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -37,6 +43,21 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.3</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>				
 	</dependencies>
 
 	<build>
@@ -44,6 +65,7 @@
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
 			</resource>
 		</resources>
 
@@ -60,6 +82,30 @@
 					<compilerArgument>-proc:none</compilerArgument>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+            	<groupId>pl.project13.maven</groupId>
+            	<artifactId>git-commit-id-plugin</artifactId>
+            	<version>2.1.9</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+                    <generateGitPropertiesFile>false</generateGitPropertiesFile>
+                    <!--If the dir is missing (WHY should it?!), we'll just skip telling the user..-->
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <abbrevLength>5</abbrevLength>
+                    <gitDescribe>
+                        <abbrev>7</abbrev>
+                    </gitDescribe>
+                </configuration>            	
+        	</plugin>
+        	
 		</plugins>
 
 	</build>

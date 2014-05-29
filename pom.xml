@@ -4,7 +4,7 @@
 	<groupId>net.pechorina.uregistrum</groupId>
 	<artifactId>uregistrum-lib</artifactId>
 	<packaging>jar</packaging>
-	<version>0.1.2</version>
+	<version>0.2.2</version>
 	<description>uRegistrum - java micro services registry client lib</description>
 	<url>https://github.com/vpechorin/uregistrum-lib</url>
 	
@@ -21,14 +21,11 @@
 		</developer>
 	</developers>
 	
-	<scm>
-		<connection>scm:git:file:///home/victor/workspace/uregistrum-lib</connection>
-	</scm>
-	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.springframework.version>4.0.3.RELEASE</org.springframework.version>
+		<org.springframework.version>4.0.5.RELEASE</org.springframework.version>
 		<slf4j.version>1.7.7</slf4j.version>
+		<httpclient.version>4.3.3</httpclient.version>
 	</properties>
 	
 	<dependencies>
@@ -43,6 +40,11 @@
 			<artifactId>joda-time</artifactId>
 			<version>2.3</version>
 		</dependency>
+		<dependency>
+  			<groupId>org.apache.httpcomponents</groupId>
+  			<artifactId>httpclient</artifactId>
+  			<version>${httpclient.version}</version>
+		</dependency>		
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -105,7 +107,6 @@
                     </gitDescribe>
                 </configuration>            	
         	</plugin>
-        	
 		</plugins>
 
 	</build>

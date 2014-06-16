@@ -1,53 +1,54 @@
 package net.pechorina.uregistrum.service;
 
+import net.pechorina.uregistrum.data.Endpoint;
+
+import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 public class RestTemplateMaker {
-	private static final Logger logger = LoggerFactory
-			.getLogger(RestTemplateMaker.class);
 	
-	private static int instanceCount = 0;
-	
-	public static RestTemplate getAuthRestTemplate(String host, int port, String user,
+	public static RestTemplate getAuthRestTemplate(String host, int port, String scheme, String username,
 			String password, int timeout) {
-		instanceCount++;
-		logger.debug("Preparing REST template #" + instanceCount + " [" + host + ":" + port + "],  user/password: [" + user + "/"
-				+ password + "]");
-		RequestConfig config = RequestConfig.custom()
-				.setConnectTimeout(timeout * 1000)
-				.setConnectionRequestTimeout(timeout * 1000)
-				.setSocketTimeout(timeout * 1000).build();
-
-		BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-		
+		if (timeout == 0) timeout = 5;
+		HttpHost httphost = new HttpHost(host, port, scheme);
+        ClientHttpRequestFactory requestFactory = 
+          new HttpComponentsClientHttpRequestFactoryBasicAuth(httphost, username, password, timeout);
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
+ 
+        return restTemplate;
+	}
+	
+	public static RestTemplate getAuthRestTemplatePreAuth(String host, int port, String scheme, String username,
+			String password, int timeout) {
 		AuthScope scope = new AuthScope(host, port, AuthScope.ANY_REALM);
-
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
-				user, password);
+        UsernamePasswordCredentials creds = new UsernamePasswordCredentials(
+				username, password);
+        CredentialsProvider credsProvider = new BasicCredentialsProvider();
+        credsProvider.setCredentials(scope, creds);
+        
+//        RequestConfig config = RequestConfig.custom()
+//				.setConnectTimeout(timeout * 1000)
+//				.setConnectionRequestTimeout(timeout * 1000)
+//				.setSocketTimeout(timeout * 1000).build();
 		
-		credentialsProvider.setCredentials(scope, creds);
+		CloseableHttpClient httpClient = HttpClients.custom()
+                .setDefaultCredentialsProvider(credsProvider).build();
+		HttpComponentsClientHttpRequestFactory requestFactory = new PreEmptiveAuthHttpRequestFactory( httpClient );
 		
-		CloseableHttpClient client = HttpClientBuilder.create()
-				.setDefaultRequestConfig(config)
-				.setDefaultCredentialsProvider(credentialsProvider).build();
-
-		ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(
-				client);
-
 		RestTemplate restTemplate = new RestTemplate(requestFactory);
-		
-
-		logger.debug(instanceCount + " restTemplate created");
-		return restTemplate;
+		 
+        return restTemplate;
+	}
+	
+	public static RestTemplate getAuthRestTemplate(Endpoint endpoint) {
+		return getAuthRestTemplatePreAuth(endpoint.getHost(), endpoint.getPort(), endpoint.getScheme(), endpoint.getUsername(), endpoint.getPassword(), 10);
 	}
 }

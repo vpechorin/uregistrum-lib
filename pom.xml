@@ -4,7 +4,7 @@
 	<groupId>net.pechorina.uregistrum</groupId>
 	<artifactId>uregistrum-lib</artifactId>
 	<packaging>jar</packaging>
-	<version>0.3.1</version>
+	<version>0.3.2</version>
 	<description>uRegistrum - java micro services registry client lib</description>
 	<url>https://github.com/vpechorin/uregistrum-lib</url>
 
@@ -25,14 +25,14 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<org.springframework.version>4.0.6.RELEASE</org.springframework.version>
 		<slf4j.version>1.7.7</slf4j.version>
-		<httpclient.version>4.3.3</httpclient.version>
+		<httpclient.version>4.3.5</httpclient.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 

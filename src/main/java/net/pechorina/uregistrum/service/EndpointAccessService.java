@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.pechorina.uregistrum.data.Endpoint;
+import net.pechorina.uregistrum.data.EndpointHolder;
 import net.pechorina.uregistrum.exceptions.EndpointNotFoundException;
 import net.pechorina.uregistrum.exceptions.EnvironmentException;
 import net.pechorina.uregistrum.exceptions.ServerErrorException;
@@ -26,7 +27,7 @@ public class EndpointAccessService {
 	private String addr;
 	private RestTemplate restTemplate;
 	private final static String endpointsPath = "/api/endpoints";
-
+	
 	public EndpointAccessService(String addr, String username, String password, int timeout) {
 		super();
 		this.addr = addr;
@@ -39,6 +40,27 @@ public class EndpointAccessService {
 		logger.debug("Ready to build authRestTemplate, host:" + uri);
 		this.restTemplate = RestTemplateMaker.getAuthRestTemplatePreAuth(uri.getHost(), uri.getPort(), uri.getScheme(), username, password, timeout);
 		logger.debug("authRestTemplate built");
+	}
+	
+	public EndpointHolder getService(String serviceName, EndpointAccessService endpointService) {
+		
+		Endpoint e = null;
+		RestTemplate restTemplate = null;
+
+		try {
+			e = endpointService.getEndpointByName(serviceName);
+		} catch (EnvironmentException ex) {
+			logger.warn("Environment exception: " + ex);
+		} catch (EndpointNotFoundException ex) {
+			logger.error("Endpoint not found: " + ex);
+		} catch (ServerErrorException ex) {
+			logger.error("Server error: " + ex);
+		}
+		if (e != null) {
+			restTemplate = RestTemplateMaker.getAuthRestTemplate(e);
+		}
+		
+		return new EndpointHolder(e, restTemplate);
 	}
 
 	public String getAddressByName(String name) throws EnvironmentException, EndpointNotFoundException, ServerErrorException {
